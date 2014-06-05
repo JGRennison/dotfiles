@@ -1,0 +1,31 @@
+# Copyright © Jonathan G. Rennison 2014 <j.g.rennison@gmail.com>
+# License: New BSD License, see BSD-LICENSE.txt
+
+# Note that this is intended to be included from ~/.gitconfig
+# A possible way to do this is to use:
+##[include]
+##	path = .gitconfig_ext
+# This is to avoid mixing personal information with tracked files
+
+[alias]
+	# lg1 and lg2 are from http://stackoverflow.com/a/9074343
+	# Author: Slipp D. Thompson
+	lg1 = log --graph --abbrev-commit --decorate --date=relative --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(reset)%s%C(reset) %C(white)- %an%C(reset)%C(bold yellow)%d%C(reset)' --all
+	lg2 = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n''          %C(reset)%s%C(reset) %C(white)- %an%C(reset)' --all
+	lg = !"git lg1 --color=always | less -R -S +g"
+
+	fg1 = forest --abbrev-commit --decorate --date=relative --pretty=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(reset)%s%C(reset) %C(white)- %an%C(reset)%C(bold yellow)%d%C(reset)' --all
+	fg = !"git fg1 | less -R -S +g"
+
+	ignore = update-index --assume-unchanged
+	unignore = update-index --no-assume-unchanged
+	ignored = !git ls-files -v | grep "^[[:lower:]]"
+	showtrackedignored = ls-files -i --exclude-standard
+	reset-head-timestamp = !"git commit --amend --date=\"`date`\" -C HEAD"
+	null-tree = !"git hash-object -t tree /dev/null"
+	tail-commit = !"git rev-list --max-parents=0 HEAD"
+
+[color]
+	ui = true
+[push]
+	default = simple
