@@ -1,0 +1,39 @@
+# Copyright © Jonathan G. Rennison 2014 <j.g.rennison@gmail.com>
+# License: New BSD License, see BSD-LICENSE.txt
+
+alias ls='ls -h --classify --color=auto'
+alias sshfst='sshfs -o idmap=user -o transform_symlinks'
+alias gitka='gitk --all'
+alias hv='history | less +G'
+alias dmt='dmesg -T | tail'
+alias dml='dmesg -T | less +G'
+
+# function to do `cd` using `xd`
+function cxd() {
+	cd `xd "$@"`
+}
+
+# function to do `pushd` using `xd`
+function pxd() {
+	pushd `xd "$@"`
+}
+
+# Wait until pgrep returns no results
+function pgrepwait() {
+	while pgrep "$@" > /dev/null; do sleep 1; done
+}
+
+# Based on from http://tychoish.com/rhizome/9-awesome-ssh-tricks/
+# This works even if the SSH agent has no identities currently loaded
+function ssh-reagent() {
+	for agent in /tmp/ssh-*/agent.*; do
+		export SSH_AUTH_SOCK="$agent"
+		ssh-add -l &> /dev/null
+		if [ "$?" -lt 2 ]; then
+			echo "Found working SSH Agent"
+			ssh-add -l
+			return
+		fi
+	done
+	echo "Cannot find SSH agent"
+}

@@ -1,0 +1,16 @@
+# Based on http://askubuntu.com/a/80882
+# Author: waltinator, cc by-sa 3.0
+
+[ -d ~/.history ] || mkdir --mode=0700 ~/.history
+[ -d ~/.history ] && chmod 0700 ~/.history
+HISTFILE="$HOME/.history/history.`date -u +%Y%m%dT%H%M%SZ`.$$.`tty | sed -e 's:/dev/::' -e 's:/:_:'`"
+
+# close any old history file by zeroing HISTFILESIZE
+HISTFILESIZE=0
+# then set HISTFILESIZE to a large value
+HISTFILESIZE=9999
+HISTSIZE=9999
+
+shopt -u histappend
+
+export HISTTIMEFORMAT="%F %T %z (%a): "

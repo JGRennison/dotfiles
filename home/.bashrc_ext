@@ -1,0 +1,213 @@
+# Copyright © Jonathan G. Rennison 2014 <j.g.rennison@gmail.com>
+# License: New BSD License, see BSD-LICENSE.txt
+
+# Note that this is intended to be sourced from the end of a "standard" .bashrc
+# A possible way to do this is to use:
+## if [ -f ~/.bashrc_ext ]; then
+## 	. ~/.bashrc_ext
+## fi
+# This is to avoid needing to re-implement distro-specific boilerplate
+
+############################################################################
+# Variables starting with BRCEJ_ control the functionality of this file    #
+# Unless otherwise specified: 0 = off, 1 = on                              #
+############################################################################
+
+# Show hostname in prompt
+BRCEJ_SHOW_HOST=1
+
+# Add an indicator to the prompt if we are logged in over SSH
+BRCEJ_SHOW_SSH=0
+
+# Turn on BRCEJ_SHOW_HOST if we are logged in over SSH
+BRCEJ_SHOW_SSH_HOST=0
+
+# It is probably a good idea to always have at least one of BRCEJ_SHOW_HOST and BRCEJ_SHOW_SSH_HOST set
+# On my "home" machines I have
+## BRCEJ_SHOW_HOST=0
+## BRCEJ_SHOW_SSH=1
+## BRCEJ_SHOW_SSH_HOST=1
+# On machines I usually remote into I have
+## BRCEJ_SHOW_HOST=1
+## BRCEJ_SHOW_SSH=0
+## BRCEJ_SHOW_SSH_HOST=0
+# There are more of the latter than the former, hence the defaults above
+
+
+# Add an indicator to the prompt if we are in a GNU screen
+BRCEJ_SHOW_SCREEN=1
+
+# Turn on BRCEJ_SHOW_HOST if we are in a GNU screen
+BRCEJ_SHOW_SCREEN_HOST=1
+
+# Show full paths in the prompt shortened to a maximum of this value (0 to just show the last path item as normal)
+BRCEJ_SHORTEN_DIRLEN=35
+
+# Show shell job counts in the prompt
+BRCEJ_SHOW_JOB_COUNT=1
+
+# Show history numbers in the prompt
+BRCEJ_SHOW_HISTORY_NUM=0
+
+# Show git state in the prompt
+BRCEJ_SHOW_GITSTATE=1
+# See /usr/lib/git-core/git-sh-prompt
+GIT_PS1_SHOWUPSTREAM="auto"
+GIT_PS1_SHOWDIRTYSTATE="1"
+GIT_PS1_SHOWSTASHSTATE="1"
+
+# Run ulimit -c unlimited
+BRCEJ_UNLIMITED_CORES=1
+
+# History re-editing and verification
+BRCEJ_HISTORY_REEDIT=1
+
+# History logging as per ~/.bash_history_proc
+BRCEJ_HISTORY_LOGGING=1
+
+# Set terminal title (e.g. for xterm)
+BRCEJ_SET_TITLE=1
+
+# Show tty name in title
+BRCEJ_TITLE_SHOW_TTY=1
+
+# Show non-zero return code before prompt
+BRCEJ_SHOW_RETCODE=1
+
+# Convenient place to locally override the above BRCEJ_ variables
+if [ -f ~/.bashrc_ext_cfg ]; then
+	. ~/.bashrc_ext_cfg
+fi
+
+############################################################################
+
+if [ "${BRCEJ_UNLIMITED_CORES}" != 0 ]; then
+	ulimit -c unlimited
+fi
+
+if [ "${BRCEJ_HISTORY_REEDIT}" != 0 ]; then
+	# Re-edit a history substitution line if it failed
+	shopt -s histreedit
+
+	# Edit a recalled history line before executing
+	shopt -s histverify
+fi
+
+if [ "${BRCEJ_HISTORY_LOGGING}" != 0 -a -f ~/.bash_history_proc ]; then
+	. ~/.bash_history_proc
+fi
+
+export PROMPT_COMMAND_PREFIX=''
+export PS1_PREFIX=''
+export PROMPT_COMMAND_HOST=''
+export PS1_HOST=''
+export PROMPT_COMMAND=''
+
+function function_exists() {
+	declare -F "$1" > /dev/null
+}
+
+#git prompt additions
+#see /usr/lib/git-core/git-sh-prompt
+if [ "${BRCEJ_SHOW_GITSTATE}" != 0 ] && function_exists "__git_ps1"; then
+	PS1_PREFIX='`__git_ps1 "\[\e[0;36m\]git[\[\e[m\]%s\[\e[0;36m\]]\[\e[m\] "`'
+fi
+
+function jobscount() {
+	jobs_running=$(jobs -r | wc -l)
+	jobs_suspended=$(jobs -s | wc -l)
+	if [ $jobs_suspended -eq 0 ]; then
+		if [ $jobs_running -ne 0 ]; then
+			echo -n "${1}J${jobs_running}${2}"
+		fi
+	else
+		echo -n "${1}J${jobs_running}/${jobs_suspended}${2}"
+	fi
+}
+if [ "${BRCEJ_SHOW_JOB_COUNT}" != 0 ]; then
+	PS1_PREFIX='`jobscount "\[\e[0;37m\]" "\[\e[m\] "`'"${PS1_PREFIX}"
+fi
+
+if [ "${BRCEJ_SHOW_HISTORY_NUM}" != 0 ]; then
+	PS1_PREFIX='\[\e[0;33m\]\!: \[\e[m\]'"${PS1_PREFIX}"
+fi
+
+if [ "${BRCEJ_TITLE_SHOW_TTY}" != 0 ]; then
+	export THIS_TTY=`tty | sed -e "s:/dev/::"`
+else
+	export THIS_TTY=
+fi
+
+if [[ "${TERM}" =~ screen* ]]; then
+	if [ "${BRCEJ_SHOW_SCREEN}" != 0 ]; then
+		export PROMPT_COMMAND_PREFIX="screen: ${PROMPT_COMMAND_PREFIX}"
+		export PS1_PREFIX="\[\e[0;93m\]screen: ${PS1_PREFIX}"
+	fi
+	if [ "${BRCEJ_SHOW_SCREEN_HOST}" != 0 ]; then
+		BRCEJ_SHOW_HOST=1
+	fi
+elif [ -n "`pstree -As $PPID | grep sshd`" ]; then
+	if [ "${BRCEJ_SHOW_SSH}" != 0 ]; then
+		export PROMPT_COMMAND_PREFIX="ssh: ${PROMPT_COMMAND_PREFIX}"
+		export PS1_PREFIX="\[\e[0;35m\]ssh: ${PS1_PREFIX}"
+	fi
+	if [ "${BRCEJ_SHOW_SSH_HOST}" != 0 ]; then
+		BRCEJ_SHOW_HOST=1
+	fi
+fi
+
+if [ "${BRCEJ_SHOW_HOST}" != 0 ]; then
+	export PROMPT_COMMAND_HOST="@`hostname`"
+	export PS1_HOST='\[\e[m\]@\[\e[0;35m\]\H'
+fi
+
+if [ "`id -u`" -ne "0" ]; then
+	PROMPT_USER_COLOUR='32'
+else
+	PROMPT_USER_COLOUR='31'
+fi
+
+if [ "${BRCEJ_SET_TITLE}" != 0 ]; then
+	case "$TERM" in
+	xterm*|rxvt*|screen*)
+			if [ -n "$PROMPT_COMMAND" ]; then
+				PROMPT_COMMAND+="; "
+			fi
+		PROMPT_COMMAND+='echo -ne "\033]2;${PROMPT_COMMAND_PREFIX}${USER}${PROMPT_COMMAND_HOST} - ${PWD/#$HOME/\~}${THIS_TTY:+ - }${THIS_TTY}\007"'
+		;;
+	*)
+		;;
+	esac
+fi
+
+if [ "${BRCEJ_SHOW_RETCODE}" != 0 ]; then
+	export PS1_SELECT="VAR=\$?; if [ \$VAR != 0 ]; then echo -n \"\[\033[91;1;4m\]Returned: \${VAR}\\n\[\033[0m\]\"; fi"
+else
+	export PS1_SELECT=":"
+fi
+
+PS1_PREPATH="\`${PS1_SELECT}\`${PS1_PREFIX}\[\e[0;${PROMPT_USER_COLOUR}m\]\u${PS1_HOST}\[\e[m\][\[\e[1;34m\]"
+PS1_POSTPATH="\[\e[m\]]\[\e[1;${PROMPT_USER_COLOUR}m\]\\$\[\e[m\] \[\e[0m\]"
+
+if [ "${BRCEJ_SHORTEN_DIRLEN}" != 0 -a -f ~/.shorten_path.py ] && type python > /dev/null; then
+	function shortendir() {
+		ELIP=`printf '\u2026'`
+		~/.shorten_path.py "${PWD/#$HOME/\~}" "${BRCEJ_SHORTEN_DIRLEN}" "$ELIP" | sed -r "s/$ELIP/\\\\[\\\\033[96m\\\\]$ELIP\\\\[\\\\033[34m\\\\]/g"
+	}
+	export PREV_CSD_PWD=
+	export CURSHRTPWD=
+	function cachedshortendir() {
+		if [ "${PWD}" != "${PREV_CSD_PWD}" ]; then
+			export CURSHRTPWD="`shortendir`"
+			export PREV_CSD_PWD="${PWD}"
+		fi
+	}
+
+	if [ -n "$PROMPT_COMMAND" ]; then
+		PROMPT_COMMAND+="; "
+	fi
+	PROMPT_COMMAND+='cachedshortendir; export PS1="${PS1_PREPATH}${CURSHRTPWD}${PS1_POSTPATH}"'
+else
+	export PS1="${PS1_PREPATH}\W${PS1_POSTPATH}"
+	PROMPT_COMMAND=
+fi
