@@ -23,7 +23,7 @@
 	showtrackedignored = ls-files -i --exclude-standard
 	reset-head-timestamp = !"git commit --amend --date=\"`date`\" -C HEAD"
 	null-tree = !"git hash-object -t tree /dev/null"
-	tail-commit = !"git rev-list --max-parents=0 HEAD"
+	tail-rev = !"git rev-list --max-parents=0 HEAD"
 
 [color]
 	ui = true
