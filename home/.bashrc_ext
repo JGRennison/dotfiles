@@ -33,6 +33,8 @@ BRCEJ_SHOW_SSH_HOST=0
 ## BRCEJ_SHOW_SSH_HOST=0
 # There are more of the latter than the former, hence the defaults above
 
+# Set this to a non-empty string to use this instead of the machine hostname
+BRCEJ_USE_HOST=
 
 # Add an indicator to the prompt if we are in a GNU screen
 BRCEJ_SHOW_SCREEN=1
@@ -157,8 +159,8 @@ elif [ -n "`pstree -As $PPID | grep sshd`" ]; then
 fi
 
 if [ "${BRCEJ_SHOW_HOST}" != 0 ]; then
-	export PROMPT_COMMAND_HOST="@`hostname`"
-	export PS1_HOST='\[\e[m\]@\[\e[0;35m\]\H'
+	export PROMPT_COMMAND_HOST="@${BRCEJ_USE_HOST:-`hostname`}"
+	export PS1_HOST='\[\e[m\]@\[\e[0;35m\]'"${BRCEJ_USE_HOST:-\h}"
 fi
 
 if [ "`id -u`" -ne "0" ]; then
