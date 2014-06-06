@@ -25,6 +25,11 @@
 	null-tree = !"git hash-object -t tree /dev/null"
 	tail-rev = !"git rev-list --max-parents=0 HEAD"
 
+	# Note this requires a contiguous range from a ref
+	# Providing a ref instead of a range processes the ref and all ancestors(!)
+	# Defaults to just HEAD
+	reset-author = !"f() { git filter-branch --env-filter 'GIT_AUTHOR_NAME=\"`git config user.name`\";GIT_AUTHOR_EMAIL=\"`git config user.email`\";' -- \"$@\" `[ $# -eq 0 ] && echo --no-walk HEAD`; }; f"
+
 [color]
 	ui = true
 [push]
