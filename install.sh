@@ -77,7 +77,7 @@ while read -d $'\0' line ; do
 	SRC="$THISDIR/home/$line"
 	TARGET="$HOME/$line"
 
-	if [ -L "$TARGET" -a "`readlink -f "$TARGET"`" == "`readlink -f "$TARGET"`" ]; then
+	if [ -L "$TARGET" -a "`readlink -f "$SRC"`" == "`readlink -f "$TARGET"`" ]; then
 		echo ".	$TARGET already installed"
 		continue
 	elif [ -e  "$TARGET" ]; then
