@@ -68,6 +68,12 @@ elif [ "$NOWARN" == 0 ]; then
 	fi
 fi
 
+if [ "$DRYRUN" == 0 ]; then
+	pushd "$THISDIR" &> /dev/null
+	git submodule update --init --recursive
+	popd &> /dev/null
+fi
+
 BACKUPDIR="$HOME/old_dotfiles_`date -u "+%Y%m%dT%H%M%SZ"`"
 
 # Keep a copy of STDIN
