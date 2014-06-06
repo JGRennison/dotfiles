@@ -7,6 +7,7 @@ alias gitka='gitk --all'
 alias hv='history | less +G'
 alias dmt='dmesg -T | tail'
 alias dml='dmesg -T | less +G'
+alias umount_gvfs_smb='gvfs-mount -s smb'
 
 # function to do `cd` using `xd`
 function cxd() {
@@ -36,4 +37,10 @@ function ssh-reagent() {
 		fi
 	done
 	echo "Cannot find SSH agent"
+}
+
+function dump_args() {
+	for a in "$@"; do
+		printf '\"%q\"\n' "$a"
+	done
 }
