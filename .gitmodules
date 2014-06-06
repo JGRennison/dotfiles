@@ -1,0 +1,9 @@
+[submodule "deps/git-ls-branches"]
+	path = deps/git-ls-branches
+	url = https://github.com/gitbits/git-ls-branches.git
+[submodule "deps/git-info"]
+	path = deps/git-info
+	url = https://github.com/gitbits/git-info.git
+[submodule "deps/git-shift"]
+	path = deps/git-shift
+	url = https://github.com/gitbits/git-shift.git
