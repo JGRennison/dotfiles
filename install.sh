@@ -52,6 +52,10 @@ if [ "$DRYRUN" != 0 ]; then
 elif [ "$NOWARN" == 0 ]; then
 	echo "About to install symlinks to the following files in $HOME/"
 	find "$THISDIR/home" -mindepth 1 '!' -type d -printf '\t%P\n'
+	echo "About to execute install scripts"
+	while read -d $'\0' line ; do
+		printf "\t%-30s %s\n" "$line" "`sed -n -e "/^# DESCRIPTION: / { s/^# DESCRIPTION: //; p }" < "$THISDIR/install/$line"`"
+	done < <( find "$THISDIR/install" -mindepth 1 '!' -type d -printf '%P\0' )
 	echo "Type 'y' or 'yes' to continue and install"
 	echo "Type 'd' or 'dry' for a dry-run"
 	echo "Type 'h' or 'help' to show the help text"
@@ -124,3 +128,11 @@ while read -d $'\0' line ; do
 	echo "+	Installing new $TARGET"
 	ln -rs "$SRC" "$TARGET"
 done < <(find "$THISDIR/home" -mindepth 1 '!' -type d -printf '%P\0' )
+
+while read -d $'\0' line ; do
+	if [ "$DRYRUN" != 0 ]; then
+		echo "Would execute: $THISDIR/install/$line"
+	else
+		"$THISDIR/install/$line"
+	fi
+done < <( find "$THISDIR/install" -mindepth 1 '!' -type d -printf '%P\0' )
