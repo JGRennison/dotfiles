@@ -7,12 +7,17 @@
 ##	path = .gitconfig_ext
 # This is to avoid mixing personal information with tracked files
 
+[core]
+	pager = jpager.sh
+
 [alias]
-	# lg1 and lg2 are from http://stackoverflow.com/a/9074343
+	# lg1r and lg2r are from http://stackoverflow.com/a/9074343
 	# Author: Slipp D. Thompson
-	lg1 = log --graph --abbrev-commit --decorate --date=relative --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(reset)%s%C(reset) %C(white)- %an%C(reset)%C(bold yellow)%d%C(reset)' --all
-	lg2 = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n''          %C(reset)%s%C(reset) %C(white)- %an%C(reset)' --all
-	lg = !"git lg1 --color=always | less -R -S +g"
+	lg1r = log --graph --abbrev-commit --decorate --date=relative --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(reset)%s%C(reset) %C(white)- %an%C(reset)%C(bold yellow)%d%C(reset)' --all
+	lg2r = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n''          %C(reset)%s%C(reset) %C(white)- %an%C(reset)' --all
+	lg1 = !"git lg1r | less -R -S +g"
+	lg2 = !"git lg2r | less -R -S +g"
+	lg = !"git lg1"
 
 	fg1 = forest --abbrev-commit --decorate --date=relative --pretty=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(reset)%s%C(reset) %C(white)- %an%C(reset)%C(bold yellow)%d%C(reset)' --all
 	fg = !"git fg1 | less -R -S +g"
