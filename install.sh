@@ -126,6 +126,7 @@ while read -d $'\0' line ; do
 	fi
 
 	echo "+	Installing new $TARGET"
+	mkdir -p "`dirname "$TARGET"`"
 	ln -rs "$SRC" "$TARGET"
 done < <(find "$THISDIR/home" -mindepth 1 '!' -type d -printf '%P\0' )
 
