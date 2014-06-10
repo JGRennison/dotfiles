@@ -80,6 +80,8 @@ fi
 
 BACKUPDIR="$HOME/old_dotfiles_`date -u "+%Y%m%dT%H%M%SZ"`"
 
+LNOPTS=`ln --help | grep -e "--relative" -q && echo "-r"`
+
 # Keep a copy of STDIN
 exec 3<&0
 
@@ -127,7 +129,7 @@ while read -d $'\0' line ; do
 
 	echo "+	Installing new $TARGET"
 	mkdir -p "`dirname "$TARGET"`"
-	ln -rs "$SRC" "$TARGET"
+	ln -s $LNOPTS "$SRC" "$TARGET"
 done < <(find "$THISDIR/home" -mindepth 1 '!' -type d -printf '%P\0' )
 
 while read -d $'\0' line ; do
