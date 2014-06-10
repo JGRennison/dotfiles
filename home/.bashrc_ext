@@ -169,13 +169,15 @@ else
 	PROMPT_USER_COLOUR='31'
 fi
 
+TILDE='~'
+
 if [ "${BRCEJ_SET_TITLE}" != 0 ]; then
 	case "$TERM" in
 	xterm*|rxvt*|screen*)
 			if [ -n "$PROMPT_COMMAND" ]; then
 				PROMPT_COMMAND+="; "
 			fi
-		PROMPT_COMMAND+='echo -ne "\033]2;${PROMPT_COMMAND_PREFIX}${USER}${PROMPT_COMMAND_HOST} - ${PWD/#$HOME/\~}${THIS_TTY:+ - }${THIS_TTY}\007"'
+		PROMPT_COMMAND+='echo -ne "\033]2;${PROMPT_COMMAND_PREFIX}${USER}${PROMPT_COMMAND_HOST} - ${PWD/#$HOME/$TILDE}${THIS_TTY:+ - }${THIS_TTY}\007"'
 		;;
 	*)
 		;;
@@ -194,7 +196,7 @@ PS1_POSTPATH="\[\e[m\]]\[\e[1;${PROMPT_USER_COLOUR}m\]\\$\[\e[m\] \[\e[0m\]"
 if [ "${BRCEJ_SHORTEN_DIRLEN}" != 0 -a -f ~/.shorten_path.py ] && type python > /dev/null; then
 	function shortendir() {
 		ELIP=`printf '\u2026'`
-		~/.shorten_path.py "${PWD/#$HOME/\~}" "${BRCEJ_SHORTEN_DIRLEN}" "$ELIP" | sed -r "s/$ELIP/\\\\[\\\\033[96m\\\\]$ELIP\\\\[\\\\033[34m\\\\]/g"
+		~/.shorten_path.py "${PWD/#$HOME/$TILDE}" "${BRCEJ_SHORTEN_DIRLEN}" "$ELIP" | sed -r "s/$ELIP/\\\\[\\\\033[96m\\\\]$ELIP\\\\[\\\\033[34m\\\\]/g"
 	}
 	export PREV_CSD_PWD=
 	export CURSHRTPWD=
