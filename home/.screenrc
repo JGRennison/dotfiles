@@ -1,4 +1,7 @@
 startup_message off
 autodetach on
 vbell off
-termcapinfo xterm|xterms|xs|rxvt ti@:te@
+termcapinfo xterm*|xs|rxvt ti@:te@:XT
+altscreen on
+termcapinfo xterm*|linux*|rxvt*|Eterm* OP
+scrollback 4096
