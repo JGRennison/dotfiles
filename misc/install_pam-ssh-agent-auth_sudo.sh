@@ -46,21 +46,24 @@ Defaults    env_keep += "SSH_AUTH_SOCK"
 EOL
 
 PAM="/etc/pam.d/sudo"
-TMPPAM="`mktemp -t -u "pamd-sudo-XXXXXXXXXXXXXXXXXXXXX"`"
-cp "$PAM" "$TMPPAM"
+TMPPAM=
+if ! grep -q "pam_ssh_agent_auth.so" "$PAM"; then
+	TMPPAM="`mktemp -t -u "pamd-sudo-XXXXXXXXXXXXXXXXXXXXX"`"
+	cp "$PAM" "$TMPPAM"
 
-function finish2 {
-	rm "$TMPPAM"
-	finish
-}
-trap finish2 EXIT
+	function finish2 {
+		rm "$TMPPAM"
+		finish
+	}
+	trap finish2 EXIT
 
-sed -i -e "/@include common-auth/ i auth       sufficient pam_ssh_agent_auth.so file=/etc/ssh/sudo_authorized_keys" "$TMPPAM"
+	sed -i -e "/@include common-auth/ i auth       sufficient pam_ssh_agent_auth.so file=/etc/ssh/sudo_authorized_keys" "$TMPPAM"
 
-echo "This will update $PAM as diffed below"
-echo ""
-git --no-pager diff --no-index -- "$PAM" "$TMPPAM"
-echo ""
+	echo "This will update $PAM as diffed below"
+	echo ""
+	git --no-pager diff --no-index -- "$PAM" "$TMPPAM"
+	echo ""
+fi
 
 sudoers_add_install
 
@@ -70,7 +73,9 @@ if [ '!' -e '/etc/ssh/sudo_authorized_keys' ]; then
 	chmod 644 /etc/ssh/sudo_authorized_keys
 fi
 
-cp "$TMPPAM" "$PAM"
+if [ -n "$TMPPAM" ]; then
+	cp "$TMPPAM" "$PAM"
+fi
 
 echo "Type 'y' or 'yes' to edit /etc/ssh/sudo_authorized_keys now"
 read -p "" -r
