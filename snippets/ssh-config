@@ -1,0 +1,15 @@
+ControlMaster auto
+ControlPath ~/.ssh/control_%r@%h:%p
+ControlPersist 10m
+
+KeepAlive yes
+ServerAliveInterval 60
+
+# Proxying SSH via an intermediary
+
+host TARGET1 ...
+	ProxyCommand ssh -q PROXY nc -q0 %h %p
+
+# Other useful bits
+	ForwardAgent yes
+	IdentityFile KEYFILE
