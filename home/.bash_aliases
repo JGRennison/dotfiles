@@ -9,6 +9,8 @@ alias dmt='dmesg -T | tail'
 alias dml='dmesg -T | less +G'
 alias umount_gvfs_smb='gvfs-mount -s smb'
 alias newpty='script -q /dev/null'
+alias loadalias='. ~/.bash-aliases'
+alias openports='netstat -tulanpW'
 
 # function to do `cd` using `xd`
 function cxd() {
@@ -44,4 +46,9 @@ function dump_args() {
 	for a in "$@"; do
 		printf '\"%q\"\n' "$a"
 	done
+}
+
+function mcd () {
+	mkdir -p "$1"
+	cd "$1"
 }
