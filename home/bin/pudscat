@@ -1,0 +1,60 @@
+#!/bin/bash
+
+# Copyright © Jonathan G. Rennison 2014 <j.g.rennison@gmail.com>
+# License: New BSD License, see BSD-LICENSE.txt
+
+# Read from one or more Unix domain sockets using `nc -d -U socket`
+# If a socket is deleted, closed or does not yet exist, wait for it to be (re-)created and (re-)connect
+
+function show_help() {
+	echo 'Read from one or more Unix domain sockets using `nc -d -U socket`' >&2
+	echo 'If a socket is deleted, closed or does not yet exist,' >&2
+	echo 'wait for it to be (re-)created and then (re-)connect' >&2
+	echo "Usage: pudscat [OPTIONS] SOCKET ..." >&2
+	echo "-p: Prefix each output line with the name of the socket" >&2
+	echo "-h: Show this help" >&2
+	echo "If multiple sockets are given, the output will be merged using fdlinecombine" >&2
+}
+
+PREFIX=
+while getopts ":ph" opt; do
+	case $opt in
+		p)
+			PREFIX=1
+			;;
+		h | \?)
+			show_help
+			exit 1
+			;;
+	esac
+done
+
+shift $(($OPTIND-1))
+
+function pudscatbase() {
+	execonnew -e "$1" nc -d -U "$1"
+}
+
+if [ -n "$PREFIX" ]; then
+	function pudscatout() {
+		pudscatbase "$1" | sed -u "s/^/$1: /"
+	}
+else
+	function pudscatout() {
+		pudscatbase "$1"
+	}
+fi
+
+if [ $# -eq 0 ]; then
+	show_help
+	exit 1
+elif [ $# -eq 1 ]; then
+	pudscatout "$1"
+else
+	fds=()
+	for var in "$@"; do
+		exec {fd}< <( pudscatout "$var" )
+		fds+=($fd)
+	done
+	fdlinecombine "${fds[@]}"
+fi
