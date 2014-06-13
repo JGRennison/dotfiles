@@ -1,0 +1,45 @@
+#!/bin/bash
+
+# Copyright © Jonathan G. Rennison 2014 <j.g.rennison@gmail.com>
+# License: New BSD License, see BSD-LICENSE.txt
+
+# Executes a command whenever the named file is (re-)created
+
+function show_help() {
+	echo "Executes a command whenever the named file is (re-)created" >&2
+	echo "Usage: execonnew [OPTIONS] FILE COMMAND [ARGS ...]" >&2
+	echo "-e: Also execute command once if file already exists" >&2
+	echo "-h: Show this help" >&2
+}
+
+EXECEXISTING=
+while getopts ":eh" opt; do
+	case $opt in
+		e)
+			EXECEXISTING=1
+			;;
+		h | \?)
+			show_help
+			exit 1
+			;;
+	esac
+done
+
+shift $(($OPTIND-1))
+
+if [ $# -lt 2 -o -z "$1" -o -z "$2" ]; then
+	echo "Missing filename and command arguments" >&2
+	show_help
+	exit 1
+fi
+
+FILE="$1"
+shift
+[ -n "$EXECEXISTING" -a -e "$FILE" ] && "$@"
+while true; do
+	waitfornew "$FILE"
+	if [ $? -ne 0 ]; then
+		break
+	fi
+	"$@"
+done

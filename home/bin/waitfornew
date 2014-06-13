@@ -1,0 +1,40 @@
+#!/bin/bash
+
+# Copyright © Jonathan G. Rennison 2014 <j.g.rennison@gmail.com>
+# License: New BSD License, see BSD-LICENSE.txt
+
+# Wait for a single file to be created using inotifywait
+
+if [ $# -ne 1 -o -z "$1" ]; then
+	echo "Usage: waitfornew FILE" >&2
+	echo "Waits for a single file to be created" >&2
+	exit 1
+fi
+
+DIRNAME="`dirname "$1"`"
+
+if [ -d "$DIRNAME" ]; then
+	: # do nothing
+elif [ '!' -e "$DIRNAME" ]; then
+	waitfornew "$DIRNAME"
+fi
+if [ '!' -d "$DIRNAME" ]; then
+	echo "$DIRNAME is not a directory" >&2
+	exit 1
+fi
+
+PIPE="$(mktemp -u)"
+mkfifo $PIPE
+exec 3<>$PIPE
+rm $PIPE
+
+inotifywait -e create -q -m "$DIRNAME" --format %f >&3 &
+
+IPID=$!
+
+function cleanup() {
+	kill "$IPID"
+}
+trap cleanup EXIT
+
+grep -q -x -e "`basename "$1"`" <&3
