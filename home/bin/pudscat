@@ -45,6 +45,11 @@ else
 	}
 fi
 
+function cleanup() {
+	pkill -g "$$"
+}
+trap cleanup EXIT
+
 if [ $# -eq 0 ]; then
 	show_help
 	exit 1
