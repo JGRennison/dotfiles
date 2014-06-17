@@ -2,7 +2,6 @@
 # License: New BSD License, see BSD-LICENSE.txt
 
 alias ls='ls -h --classify --color=auto'
-alias sshfst='sshfs -o idmap=user -o transform_symlinks'
 alias gitka='gitk --all'
 alias gg='git gui'
 alias hv='history | less +G'
@@ -12,6 +11,13 @@ alias umount_gvfs_smb='gvfs-mount -s smb'
 alias newpty='script -q /dev/null'
 alias loadalias='. ~/.bash_aliases'
 alias openports='netstat -tulanpW'
+
+alias sshfst='sshfs -o idmap=user -o transform_symlinks -o ControlPath=none'
+
+function sshfsa() {
+	mkdir -p ~/mnt/"$1"
+	sshfst "$1":/ ~/mnt/"$1"
+}
 
 # function to do `cd` using `xd`
 function cxd() {
