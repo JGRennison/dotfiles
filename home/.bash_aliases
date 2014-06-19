@@ -11,6 +11,7 @@ alias umount_gvfs_smb='gvfs-mount -s smb'
 alias newpty='script -q /dev/null'
 alias loadalias='. ~/.bash_aliases'
 alias openports='netstat -tulanpW'
+alias tsf='stdbuf -oL ts "%F %H:%M:%.S %z"'
 
 alias sshfst='sshfs -o idmap=user -o transform_symlinks -o ControlPath=none'
 
