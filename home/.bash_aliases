@@ -20,6 +20,12 @@ function sshfsa() {
 	sshfst "$1":/ ~/mnt/"$1"
 }
 
+if which ssh-agent-on-demand &>/dev/null; then
+	alias ssh='ssh-agent-on-demand -1dF -f ~/.ssh/sshod_config -e ssh'
+	alias cssh='ssh-agent-on-demand -1dF -f ~/.ssh/sshod_config -e cssh'
+	alias ssh-add='ssh-agent-on-demand -1dF -f ~/.ssh/sshod_config -e ssh-add'
+fi
+
 # function to do `cd` using `xd`
 function cxd() {
 	cd `xd "$@"`
