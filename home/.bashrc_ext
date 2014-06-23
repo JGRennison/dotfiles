@@ -215,3 +215,5 @@ else
 	export PS1="${PS1_PREPATH}\W${PS1_POSTPATH}"
 	PROMPT_COMMAND=
 fi
+
+EDITOR=nano
