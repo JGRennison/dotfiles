@@ -8,6 +8,7 @@
 
 THISDIR="$(readlink -f $(dirname "$0"))"
 
+mkdir -p "$HOME/.config/htop/"
 HTOPRC="$HOME/.config/htop/htoprc"
 BCKUP="$HOME/.config/htop/htoprc-`date -u "+%Y%m%dT%H%M%SZ"`"
 SRC="$THISDIR/htoprc"
