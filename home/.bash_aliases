@@ -20,6 +20,10 @@ function sshfsa() {
 	sshfst "$1":/ ~/mnt/"$1"
 }
 
+function funmount() {
+	fusermount -u ~/mnt/"$1"
+}
+
 if which ssh-agent-on-demand &>/dev/null; then
 	alias ssh='ssh-agent-on-demand -1dF -f ~/.ssh/sshod_config -e ssh'
 	alias cssh='ssh-agent-on-demand -1dF -f ~/.ssh/sshod_config -e cssh'
