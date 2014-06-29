@@ -1,0 +1,27 @@
+#!/usr/bin/perl
+
+# Copyright © Jonathan G. Rennison 2014 <j.g.rennison@gmail.com>
+# License: New BSD License, see BSD-LICENSE.txt
+
+# Decode bash history files which look like:
+##	#1402261993
+##	foo bar
+# Into
+##	        2014-06-08 22:13:13 +0100 (Sun): foo bar
+
+# If no input files given, use all readable files in ~/.history/
+
+use DateTime;
+
+@ARGV = grep { -r } glob('~/.history/*') unless @ARGV;
+
+my $localtime = DateTime::TimeZone->new(name => 'local');
+
+while(<>) {
+	if(/^#(\d+)$/) {
+		my $histdate = DateTime->from_epoch(epoch => $1, time_zone => $localtime);
+		my $histdatestr = $histdate->strftime("%F %T %z (%a)");
+		my $nextline = <> or last;
+		print "        " . $histdatestr . ": " . $nextline;
+	}
+}
