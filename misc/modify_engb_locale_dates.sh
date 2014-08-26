@@ -8,12 +8,12 @@
 THISDIR="$(readlink -f $(dirname "$0"))"
 
 if [ -e "/usr/share/i18n/locales/en_GB.orig" ]; then
-	echo "Seems to be already installed, aborting" &>2
+	echo "Seems to be already installed, aborting" >&2
 	exit 1
 fi
 
 if [ '!' -w "/usr/share/i18n/locales/" ]; then
-	echo "Can't write to /usr/share/i18n/locales/, maybe try as root? Aborting" &>2
+	echo "Can't write to /usr/share/i18n/locales/, maybe try as root? Aborting" >&2
 	exit 1
 fi
 
