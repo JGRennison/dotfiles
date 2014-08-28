@@ -15,6 +15,7 @@ DRYRUN=0
 JUSTDOIT=0
 
 THISDIR="$(readlink -f $(dirname "$0"))"
+. "$THISDIR/common/util.sh"
 
 function show_help() {
 	echo "Installs symlinks to dotfiles in $THISDIR/home/ into $HOME/" >&2
@@ -88,53 +89,54 @@ exec 3<&0
 while read -d $'\0' line ; do
 	SRC="$THISDIR/home/$line"
 	TARGET="$HOME/$line"
+	TARGETDISP="$line"
 
 	if [ -L "$TARGET" -a "`readlink -f "$SRC"`" == "`readlink -f "$TARGET"`" ]; then
-		echo ".	$TARGET already installed"
+		print_status_line "." "Already installed" "$TARGETDISP"
 		continue
 	elif [ -e  "$TARGET" ]; then
-		echo "!	$TARGET already exists"
+		print_status_line "!" "Already exists" "$TARGETDISP"
 
 		if [ "$DRYRUN" != 0 ]; then
 			continue;
 		fi
 
 		if [ "$NOBACKUP" == 0 ]; then
-			MSG="Type 'y' or 'yes' to backup original $TARGET to $BACKUPDIR/$line and install new one"
+			MSG="Type 'y' or 'yes' to backup original $TARGETDISP to ${BACKUPDIR#$HOME/}/$line and install new one"
 		else
-			MSG="Type 'y' or 'yes' to DELETE original $TARGET and install new one"
+			MSG="Type 'y' or 'yes' to DELETE original $TARGETDISP and install new one"
 		fi
 
 		if [ "$JUSTDOIT" == 0 ]; then
 			echo "$MSG"
 			read -p "" -r <&3
 			if [ "$REPLY" != "y" -a "$REPLY" != "yes" ]; then
-				echo "$TARGET not installed"
+				print_status_line "!" "Not installed" "$TARGETDISP"
 				continue
 			fi
 		fi
 
 		if [ "$NOBACKUP" == 0 ]; then
-			echo "-	Backing up old $TARGET to $BACKUPDIR/$line"
+			print_status_line "b" "Backing up" "$TARGETDISP to ${BACKUPDIR#$HOME/}/$line"
 			mkdir -p "`dirname "$BACKUPDIR/$line"`"
 			mv "$TARGET" "$BACKUPDIR/$line"
 		else
-			echo "-	Deleting old $TARGET"
+			print_status_line "-" "Deleting" "$TARGETDISP"
 			rm "$TARGET"
 		fi
 	elif [ "$DRYRUN" != 0 ]; then
-		echo "+	$TARGET would be installed"
+		print_status_line "+" "Would install" "$TARGETDISP"
 		continue
 	fi
 
-	echo "+	Installing new $TARGET"
+	print_status_line "+" "Installing" "$TARGETDISP"
 	mkdir -p "`dirname "$TARGET"`"
 	ln -s $LNOPTS "$SRC" "$TARGET"
 done < <(find "$THISDIR/home" -mindepth 1 '!' -type d -printf '%P\0' )
 
 while read -d $'\0' line ; do
 	if [ "$DRYRUN" != 0 ]; then
-		echo "Would execute: $THISDIR/install/$line"
+		print_status_line '$' "Would execute" "install/$line"
 	else
 		"$THISDIR/install/$line"
 	fi

@@ -6,12 +6,12 @@
 # Args: grep_string insert_string file_name msg_text
 function check_update_file() {
 	if grep -q "$1" "$3" &> /dev/null; then
-		echo ".	$4 already installed" >&2
+		print_status_line "." "Already installed" "$4"
 	else
 		cat >> "$3" <<< "$2"
 
 		if [ $? -eq 0 ]; then
-			echo "+	$4 successfully installed" >&2
+			print_status_line "+" "Installed" "$4"
 		fi
 	fi
 }
@@ -74,4 +74,11 @@ function sudoers_add_install() {
 	echo ""
 	echo "sudo -l:"
 	sudo -u "$USER" sudo -l || { echo "'sudo -l' failed, reverting change"; rm "$SUDOERS"; exit 1; }
+}
+
+COLSIZE=22
+
+# Args: status character, status, name
+function print_status_line() {
+	printf "%s\t%-${COLSIZE}s %s\n" "$1" "$2" "$3"
 }
