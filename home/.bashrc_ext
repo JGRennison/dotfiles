@@ -58,6 +58,9 @@ GIT_PS1_SHOWUPSTREAM="auto"
 GIT_PS1_SHOWDIRTYSTATE="1"
 GIT_PS1_SHOWSTASHSTATE="1"
 
+# Show SVN state in the prompt
+BRCEJ_SHOW_SVNSTATE=1
+
 # Run ulimit -c unlimited
 BRCEJ_UNLIMITED_CORES=1
 
@@ -112,7 +115,22 @@ function function_exists() {
 #git prompt additions
 #see /usr/lib/git-core/git-sh-prompt
 if [ "${BRCEJ_SHOW_GITSTATE}" != 0 ] && function_exists "__git_ps1"; then
-	PS1_PREFIX='`__git_ps1 "\[\e[0;36m\]git[\[\e[m\]%s\[\e[0;36m\]]\[\e[m\] "`'
+	PS1_PREFIX+='`__git_ps1 "\[\e[0;36m\]git[\[\e[m\]%s\[\e[0;36m\]]\[\e[m\] "`'
+fi
+
+function __svn_state() {
+	SVN_STATUS="`svn info --non-interactive 2> /dev/null`"
+	if [ $? -eq 0 ]; then
+		SVN_REV="`LANG='C' awk '/Revision:/ {print $2; }' <<< "$SVN_STATUS"`"
+		if [ -n "`svn status -q --non-interactive 2> /dev/null`" ]; then
+			SVN_REV+=' *'
+		fi
+		echo -n "${1}${SVN_REV}${2}"
+	fi
+}
+
+if [ "${BRCEJ_SHOW_SVNSTATE}" != 0 ]; then
+	PS1_PREFIX+='`__svn_state "\[\e[0;36m\]svn[\[\e[m\]" "\[\e[0;36m\]]\[\e[m\] "`'
 fi
 
 function jobscount() {
