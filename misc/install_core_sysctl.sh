@@ -18,7 +18,7 @@ fi
 cat > "$TARG" << EOL
 # This file was created by `readlink -f "$0"` at `date "+%F %T %z"`
 
-kernel.core_pattern=/tmp/cores/core.%e.%t.%p
+kernel.core_pattern=/tmp/core.%e.%t.%p
 EOL
 
 if [ "$?" -ne 0 ]; then
