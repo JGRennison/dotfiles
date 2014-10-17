@@ -16,8 +16,14 @@ alias randpass='head -q -c 15 /dev/random | base64 -'
 alias sshfst='sshfs -o idmap=user -o transform_symlinks -o ControlPath=none'
 
 function sshfsa() {
-	mkdir -p ~/mnt/"$1"
-	sshfst "$1":/ ~/mnt/"$1"
+	TARG="$1"
+	shift
+	mkdir -p ~/mnt/"$TARG"
+	sshfst "$TARG":/ ~/mnt/"$TARG" "$@"
+}
+
+function sshfsar() {
+	sshfsa "$@" -o allow_root
 }
 
 function funmount() {
@@ -69,4 +75,14 @@ function dump_args() {
 function mcd () {
 	mkdir -p "$1"
 	cd "$1"
+}
+
+function setgidify () {
+	GRP="${1:?No group given}"
+	shift
+	[ "$#" -lt 1 ] && { echo "No directories given"; return 1; }
+	[ "`id -u`" -ne 0 ] && { echo "You are not root"; return 1; }
+	chown -R :"$GRP" "$@"
+	chmod -R g+w "$@"
+	find "$@" -type d -exec chmod g+s {} \;
 }
