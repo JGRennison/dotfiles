@@ -13,6 +13,14 @@ alias loadalias='. ~/.bash_aliases'
 alias openports='netstat -tulanpW'
 alias tsf='stdbuf -oL ts "%F %H:%M:%.S %z"'
 alias randpass='head -q -c 15 /dev/random | base64 -'
+
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias .....='cd ../../../..'
+alias ......='cd ../../../../..'
+alias .......='cd ../../../../../..'
+
 alias sshfst='sshfs -o idmap=user -o transform_symlinks -o ControlPath=none'
 
 function sshfsa() {
