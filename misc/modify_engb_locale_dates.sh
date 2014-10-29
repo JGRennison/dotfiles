@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Copyright © Jonathan G. Rennison 2014 <j.g.rennison@gmail.com>
 # License: New BSD License, see BSD-LICENSE.txt
