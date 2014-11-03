@@ -79,6 +79,9 @@ BRCEJ_TITLE_SHOW_TTY=1
 # Show non-zero return code before prompt
 BRCEJ_SHOW_RETCODE=1
 
+# Show any network namespaces before prompt
+BRCEJ_SHOW_NETNS=1
+
 # Convenient place to locally override the above BRCEJ_ variables
 if [ -f ~/.bashrc_ext_cfg ]; then
 	. ~/.bashrc_ext_cfg
@@ -103,6 +106,7 @@ if [ "${BRCEJ_HISTORY_LOGGING}" != 0 -a -f ~/.bash_history_proc ]; then
 fi
 
 export PROMPT_COMMAND_PREFIX=''
+export PROMPT_COMMAND_SUFFIX=''
 export PS1_PREFIX=''
 export PROMPT_COMMAND_HOST=''
 export PS1_HOST=''
@@ -181,6 +185,14 @@ if [ "${BRCEJ_SHOW_HOST}" != 0 ]; then
 	export PS1_HOST='\[\e[m\]@\[\e[0;35m\]'"${BRCEJ_USE_HOST:-\h}"
 fi
 
+if [ "${BRCEJ_SHOW_NETNS}" != 0 ]; then
+	NETNS_LIST="`ip netns identify $$ 2> /dev/null | awk '$1=$1' RS= OFS=,`"
+	if [ -n "${NETNS_LIST}" ]; then
+		export PROMPT_COMMAND_SUFFIX="${PROMPT_COMMAND_SUFFIX} - netns[${NETNS_LIST}]"
+		export PS1_PREFIX="\[\e[0;94m\]netns[\[\e[m\]${NETNS_LIST}\[\e[0;94m\]] ${PS1_PREFIX}"
+	fi
+fi
+
 if [ "`id -u`" -ne "0" ]; then
 	PROMPT_USER_COLOUR='32'
 else
@@ -195,7 +207,7 @@ if [ "${BRCEJ_SET_TITLE}" != 0 ]; then
 			if [ -n "$PROMPT_COMMAND" ]; then
 				PROMPT_COMMAND+="; "
 			fi
-		PROMPT_COMMAND+='echo -ne "\033]2;${PROMPT_COMMAND_PREFIX}${USER}${PROMPT_COMMAND_HOST} - ${PWD/#$HOME/$TILDE}${THIS_TTY:+ - }${THIS_TTY}\007"'
+		PROMPT_COMMAND+='echo -ne "\033]2;${PROMPT_COMMAND_PREFIX}${USER}${PROMPT_COMMAND_HOST} - ${PWD/#$HOME/$TILDE}${THIS_TTY:+ - }${THIS_TTY}${PROMPT_COMMAND_SUFFIX}\007"'
 		;;
 	*)
 		;;

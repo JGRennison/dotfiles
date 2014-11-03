@@ -1,0 +1,70 @@
+#!/bin/bash
+
+# Copyright © Jonathan G. Rennison 2014 <j.g.rennison@gmail.com>
+# License: New BSD License, see BSD-LICENSE.txt
+
+# This is loosely based on https://github.com/amonakov/vpn-netns/blob/master/vpn.sh
+# and http://gigawhitlocks.com/2014/08/18/network-namespaces.html
+
+num=0
+undo=
+
+while getopts "n:u" opt; do
+  case $opt in
+    n)
+      num="$OPTARG"
+      ;;
+    u)
+      undo=1
+      ;;
+    ?)
+      exit 1
+      ;;
+  esac
+done
+
+name=natns${num}
+addr1=10.199.199.$(( (num * 2) ))
+addr2=10.199.199.$(( (num * 2) + 1 ))
+
+if [ -n "$undo" ]; then
+
+	ip netns del $name
+	ip link del veth${num}.0
+
+	iptables -t nat -D POSTROUTING -s $addr2 -d 0.0.0.0/0 -j MASQUERADE
+
+	echo "Network namespace down: $name"
+
+else
+
+	ip netns add $name || {
+		echo "Network namespace already up: $name"
+		exec ip netns exec $name ${SUDO_USER:+ sudo -u $SUDO_USER} bash
+	}
+
+	ip link add veth${num}.0 type veth peer name veth${num}.1
+
+	ip addr add $addr1/31 dev veth${num}.0
+	ip link set veth${num}.0 up
+
+	ip link set veth${num}.1 netns $name
+	ip netns exec $name ip addr add $addr2/31 dev veth${num}.1
+	ip netns exec $name ip link set veth${num}.1 up
+
+	ip netns exec $name ip link set lo up
+
+	ip netns exec $name ip route add default via $addr1
+
+	iptables -t nat -A POSTROUTING -s $addr2 -d 0.0.0.0/0 -j MASQUERADE
+
+	sysctl net.ipv4.ip_forward=1
+
+	mkdir -p /etc/netns/$name
+	sed -e "s/127\..*\..*\..*/8.8.8.8/" < /etc/resolv.conf > /etc/netns/$name/resolv.conf
+
+	echo "Network namespace up: $name"
+
+	ip netns exec $name ${SUDO_USER:+ sudo -u $SUDO_USER} bash
+
+fi
