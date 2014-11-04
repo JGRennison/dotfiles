@@ -6,8 +6,8 @@ include "%L"
 <Multi_key> <semicolon> <parenright>           : "😉"   # ;)
 <Multi_key> <colon> <p>                        : "😛"   # :p
 <Multi_key> <semicolon> <p>                    : "😜"   # ;p
-<Multi_key> <colon> <bar>                      : "😐"   # :| 
-<Multi_key> <colon> <apostrophe> <parenright>  : "😢"   # :'( 
+<Multi_key> <colon> <bar>                      : "😐"   # :|
+<Multi_key> <colon> <apostrophe> <parenright>  : "😢"   # :'(
 
 # PUNCTUATION
 <Multi_key> <bracketright> <apostrophe> : "’"   U2019    # RIGHT SINGLE QUOTATION MARK
@@ -16,6 +16,9 @@ include "%L"
 <Multi_key> <bracketleft> <quotedbl>    : "“"   U201c    # LEFT DOUBLE QUOTATION MARK
 <Multi_key> <space> <t>                 : " "   U2009    # THIN SPACE
 <Multi_key> <space> <m>                 : " "   U2003    # EM SPACE
+
+# MATHS
+<Multi_key> <tilde> <equal>             : "≈"   U2248
 
 # GREEK
 <Multi_key> <g> <A>    : "Α"   U0391    # GREEK CAPITAL LETTER ALPHA
