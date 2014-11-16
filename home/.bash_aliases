@@ -28,6 +28,7 @@ function sshfsa() {
 	shift
 	mkdir -p ~/mnt/"$TARG"
 	sshfst "$TARG":/ ~/mnt/"$TARG" "$@"
+	clearmountpoints
 }
 
 function sshfsar() {
@@ -36,6 +37,16 @@ function sshfsar() {
 
 function funmount() {
 	fusermount -u ~/mnt/"$1"
+	clearmountpoints
+}
+
+function clearmountpoints() {
+	MNT="`mount`"
+	for f in ~/mnt/*; do
+		if [ -d "$f" ] && ! grep -q "`readlink -f "$f"`" <<< "$MNT"; then
+			rmdir "$f"
+		fi
+	done
 }
 
 if which ssh-agent-on-demand &>/dev/null; then
