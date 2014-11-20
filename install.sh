@@ -94,7 +94,7 @@ while read -d $'\0' line ; do
 	if [ -L "$TARGET" -a "`readlink -f "$SRC"`" == "`readlink -f "$TARGET"`" ]; then
 		print_status_line "." "Already installed" "$TARGETDISP"
 		continue
-	elif [ -e  "$TARGET" ]; then
+	elif [ -e "$TARGET" -a ! -L "$TARGET" ]; then
 		print_status_line "!" "Already exists" "$TARGETDISP"
 
 		if [ "$DRYRUN" != 0 ]; then
@@ -127,6 +127,9 @@ while read -d $'\0' line ; do
 	elif [ "$DRYRUN" != 0 ]; then
 		print_status_line "+" "Would install" "$TARGETDISP"
 		continue
+	elif [ -L "$TARGET" ]; then
+		print_status_line "-" "Removing old symlink" "$TARGETDISP"
+		rm "$TARGET"
 	fi
 
 	print_status_line "+" "Installing" "$TARGETDISP"
