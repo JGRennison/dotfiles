@@ -1,0 +1,32 @@
+#!/bin/bash
+
+# Copyright © Jonathan G. Rennison 2014 <j.g.rennison@gmail.com>
+# License: New BSD License, see BSD-LICENSE.txt
+
+if [ "`id -u`" -ne 0 ]; then
+	echo "You are not currently root, this may not work"
+fi
+
+name=emptyns$$
+
+ip netns add $name || {
+	echo "Failed to create network namespace"
+	exit 1
+}
+
+echo "Created network namespace $name"
+
+function cleanup {
+	ip netns del $name
+	echo "Deleted network namespace $name"
+}
+
+trap cleanup EXIT
+
+if [ $# -gt 0 ]; then
+	args=("$@")
+else
+	args=("bash")
+fi
+
+ip netns exec $name ${SUDO_USER:+ sudo -u $SUDO_USER} "${args[@]}"

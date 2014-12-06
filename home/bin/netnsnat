@@ -6,6 +6,10 @@
 # This is loosely based on https://github.com/amonakov/vpn-netns/blob/master/vpn.sh
 # and http://gigawhitlocks.com/2014/08/18/network-namespaces.html
 
+if [ "$CURUID" -ne 0 ]; then
+	echo "You are not currently root, this may not work"
+fi
+
 num=0
 undo=
 
@@ -65,6 +69,6 @@ else
 
 	echo "Network namespace up: $name"
 
-	ip netns exec $name ${SUDO_USER:+ sudo -u $SUDO_USER} bash
+	exec ip netns exec $name ${SUDO_USER:+ sudo -u $SUDO_USER} bash
 
 fi
