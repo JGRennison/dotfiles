@@ -6,20 +6,32 @@
 # This is loosely based on https://github.com/amonakov/vpn-netns/blob/master/vpn.sh
 # and http://gigawhitlocks.com/2014/08/18/network-namespaces.html
 
-if [ "$CURUID" -ne 0 ]; then
+if [ "`id -u`" -ne 0 ]; then
 	echo "You are not currently root, this may not work"
 fi
 
 num=0
 undo=
+disable=
+enable=
+options=0
 
-while getopts "n:u" opt; do
+while getopts "n:ude" opt; do
   case $opt in
     n)
       num="$OPTARG"
       ;;
     u)
       undo=1
+      ((options++))
+      ;;
+    d)
+      disable=1
+      ((options++))
+      ;;
+    e)
+      enable=1
+      ((options++))
       ;;
     ?)
       exit 1
@@ -27,11 +39,30 @@ while getopts "n:u" opt; do
   esac
 done
 
+if [ "$options" -gt 1 ]; then
+	echo "Cannot set more than one of -u, -d, -e"
+	exit 1
+fi
+
 name=natns${num}
 addr1=10.199.199.$(( (num * 2) ))
 addr2=10.199.199.$(( (num * 2) + 1 ))
 
+function disable_ns() {
+	iptables -A OUTPUT -o veth${num}.0 -j DROP
+	iptables -A INPUT -i veth${num}.0 -j DROP
+	iptables -A FORWARD -i veth${num}.0 -j DROP
+}
+
+function enable_ns() {
+	iptables -D OUTPUT -o veth${num}.0 -j DROP
+	iptables -D INPUT -i veth${num}.0 -j DROP
+	iptables -D FORWARD -i veth${num}.0 -j DROP
+}
+
 if [ -n "$undo" ]; then
+
+	enable_ns 2> /dev/null
 
 	ip netns del $name
 	ip link del veth${num}.0
@@ -39,6 +70,12 @@ if [ -n "$undo" ]; then
 	iptables -t nat -D POSTROUTING -s $addr2 -d 0.0.0.0/0 -j MASQUERADE
 
 	echo "Network namespace down: $name"
+
+elif [ -n "$disable" ]; then
+	disable_ns
+
+elif [ -n "$enable" ]; then
+	enable_ns
 
 else
 
