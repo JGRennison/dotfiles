@@ -12,7 +12,7 @@ alias newpty='script -q /dev/null'
 alias loadalias='. ~/.bash_aliases'
 alias openports='netstat -tulanpW'
 alias tsf='stdbuf -oL ts "%F %H:%M:%.S %z"'
-alias randpass='head -q -c 15 /dev/random | base64 -'
+alias randpass='head -q -c 51 /dev/urandom | base64 -w 0 - | tr -d "/+iIlL1oO0" | head -q -c 15 -; echo'
 
 alias ..='cd ..'
 alias ...='cd ../..'
