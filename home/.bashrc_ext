@@ -82,6 +82,9 @@ BRCEJ_SHOW_RETCODE=1
 # Show any network namespaces before prompt
 BRCEJ_SHOW_NETNS=1
 
+# Show tag in title
+BRCEJ_SHOW_TITLETAG=1
+
 # Convenient place to locally override the above BRCEJ_ variables
 if [ -f ~/.bashrc_ext_cfg ]; then
 	. ~/.bashrc_ext_cfg
@@ -207,7 +210,7 @@ if [ "${BRCEJ_SET_TITLE}" != 0 ]; then
 			if [ -n "$PROMPT_COMMAND" ]; then
 				PROMPT_COMMAND+="; "
 			fi
-		PROMPT_COMMAND+='echo -ne "\033]2;${PROMPT_COMMAND_PREFIX}${USER}${PROMPT_COMMAND_HOST} - ${PWD/#$HOME/$TILDE}${THIS_TTY:+ - }${THIS_TTY}${PROMPT_COMMAND_SUFFIX}\007"'
+		PROMPT_COMMAND+='echo -ne "\033]2;${TITLE_TAG:+[${TITLE_TAG}] }${PROMPT_COMMAND_PREFIX}${USER}${PROMPT_COMMAND_HOST} - ${PWD/#$HOME/$TILDE}${THIS_TTY:+ - }${THIS_TTY}${PROMPT_COMMAND_SUFFIX}\007"'
 		;;
 	*)
 		;;
@@ -245,5 +248,10 @@ else
 	export PS1="${PS1_PREPATH}\W${PS1_POSTPATH}"
 	PROMPT_COMMAND=
 fi
+
+function set_title_tag() {
+	export TITLE_TAG="$1"
+	. "${BASH_SOURCE[0]}"
+}
 
 EDITOR=nano
