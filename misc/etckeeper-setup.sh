@@ -17,4 +17,4 @@ sed -i -e 's/^[[:space:]]*VCS=/#VCS=/g' "/etc/etckeeper/etckeeper.conf"
 sed -i -e 's/[[:space:]]*#[[:space:]]*VCS="git"/VCS="git"/g' "/etc/etckeeper/etckeeper.conf"
 
 etckeeper init
-etckeeper commit "Initial Commit by `readlink -f "$0"`"
+etckeeper commit "Initial Commit"

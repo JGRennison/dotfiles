@@ -73,6 +73,13 @@ function pgrepwait() {
 # Based on from http://tychoish.com/rhizome/9-awesome-ssh-tricks/
 # This works even if the SSH agent has no identities currently loaded
 function ssh-reagent() {
+	ssh-add -l &> /dev/null
+	if [ "$?" -lt 2 ]; then
+		echo "Using current SSH Agent socket"
+		ssh-add -l
+		return
+	fi
+
 	for agent in /tmp/ssh-*/agent.*; do
 		export SSH_AUTH_SOCK="$agent"
 		ssh-add -l &> /dev/null
