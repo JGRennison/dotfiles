@@ -22,6 +22,7 @@ alias ......='cd ../../../../..'
 alias .......='cd ../../../../../..'
 
 alias sshfst='sshfs -o idmap=user -o transform_symlinks -o ControlPath=none'
+complete -F _sshfs sshfst
 
 function sshfsa() {
 	TARG="$1"
@@ -30,15 +31,26 @@ function sshfsa() {
 	sshfst "$TARG":/ ~/mnt/"$TARG" "$@"
 	clearmountpoints
 }
+complete -F _sshfs sshfsa
 
 function sshfsar() {
 	sshfsa "$@" -o allow_root
 }
+complete -F _sshfs sshfsar
 
 function funmount() {
 	fusermount -u ~/mnt/"$1"
 	clearmountpoints
 }
+
+function _funmount() {
+	if [ "$COMP_CWORD" -gt 1 ]; then
+		return 1
+	fi
+	COMPREPLY=( $( IFS='/' compgen -W "$(find ~/mnt/ -mindepth 1 -maxdepth 1 -printf '%f/')" -- "${COMP_WORDS[COMP_CWORD]}" ) )
+	return 0
+}
+complete -F _funmount funmount
 
 function clearmountpoints() {
 	MNT="`mount`"
