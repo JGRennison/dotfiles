@@ -22,7 +22,14 @@ alias ......='cd ../../../../..'
 alias .......='cd ../../../../../..'
 
 alias sshfst='sshfs -o idmap=user -o transform_symlinks -o ControlPath=none'
-complete -F _sshfs sshfst
+function _sshfst() {
+	if ! complete -p sshfs &> /dev/null && declare -f -F _completion_loader &> /dev/null; then
+		_completion_loader sshfs
+	fi
+	complete -o nospace -F _sshfs "$1"
+	return 124
+}
+complete -F _sshfst sshfst
 
 function sshfsa() {
 	TARG="$1"
@@ -31,12 +38,12 @@ function sshfsa() {
 	sshfst "$TARG":/ ~/mnt/"$TARG" "$@"
 	clearmountpoints
 }
-complete -F _sshfs sshfsa
+complete -F _sshfst sshfsa
 
 function sshfsar() {
 	sshfsa "$@" -o allow_root
 }
-complete -F _sshfs sshfsar
+complete -F _sshfst sshfsar
 
 function funmount() {
 	fusermount -u ~/mnt/"$1"
