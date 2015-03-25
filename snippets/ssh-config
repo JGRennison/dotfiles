@@ -2,6 +2,9 @@ ControlMaster auto
 ControlPath ~/.ssh/control_%r@%h:%p
 ControlPersist 10m
 
+# Fixes excessively slow login
+GSSAPIAuthentication no
+
 KeepAlive yes
 ServerAliveInterval 60
 
