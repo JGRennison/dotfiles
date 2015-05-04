@@ -68,8 +68,20 @@ function clearmountpoints() {
 	done
 }
 
+function _exec_ssh() {
+	if [ "${TERMINAL_TITLE_ENABLED}" != 0 ]; then
+		echo -ne "\033]2;${TITLE_TAG:+[${TITLE_TAG}] }ssh $*\007"
+	fi
+
+	if which ssh-agent-on-demand &>/dev/null; then
+		ssh-agent-on-demand -1dF -f ~/.ssh/sshod_config -e ssh "$@"
+	else
+		ssh "$@"
+	fi
+}
+alias ssh='_exec_ssh'
+
 if which ssh-agent-on-demand &>/dev/null; then
-	alias ssh='ssh-agent-on-demand -1dF -f ~/.ssh/sshod_config -e ssh'
 	alias cssh='ssh-agent-on-demand -1dF -f ~/.ssh/sshod_config -e cssh'
 	alias ssh-add='ssh-agent-on-demand -1dF -f ~/.ssh/sshod_config -e ssh-add'
 fi
