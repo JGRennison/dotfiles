@@ -139,7 +139,7 @@ done < <(find "$THISDIR/home" -mindepth 1 '!' -type d -printf '%P\0' )
 
 while read -d $'\0' line ; do
 	if [ "$DRYRUN" != 0 ]; then
-		print_status_line '$' "Would execute" "install/$line"
+		DRYRUN=1 "$THISDIR/install/$line"
 	else
 		"$THISDIR/install/$line"
 	fi

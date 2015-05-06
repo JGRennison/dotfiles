@@ -7,6 +7,9 @@
 function check_update_file() {
 	if grep -q "$1" "$3" &> /dev/null; then
 		print_status_line "." "Already installed" "$4"
+	elif [ -n "$DRYRUN" ]; then
+		print_status_line "+" "Would install" "$4"
+		continue
 	else
 		cat >> "$3" <<< "$2"
 
