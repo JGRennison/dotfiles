@@ -2,7 +2,6 @@
 # License: New BSD License, see BSD-LICENSE.txt
 
 alias ls='ls -h --classify --color=auto'
-alias gitka='gitk --all'
 alias gg='git gui'
 alias hv='history | less +G'
 alias dmt='dmesg -T | tail'
@@ -13,6 +12,10 @@ alias loadalias='. ~/.bash_aliases'
 alias openports='netstat -tulanpW'
 alias tsf='stdbuf -oL ts "%F %H:%M:%.S %z"'
 alias randpass='head -q -c 51 /dev/urandom | base64 -w 0 - | tr -d "/+iIlL1oO0" | head -q -c 15 -; echo'
+
+alias gitka='gitk --all'
+alias gitk-merge='gitk --left-right HEAD...MERGE_HEAD'
+alias gitk-merge-conflict='gitk --merge --left-right'
 
 alias ..='cd ..'
 alias ...='cd ../..'

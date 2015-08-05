@@ -35,6 +35,14 @@
 	# Defaults to just HEAD
 	reset-author = !"f() { git filter-branch --env-filter 'GIT_AUTHOR_NAME=\"`git config user.name`\";GIT_AUTHOR_EMAIL=\"`git config user.email`\";' -- \"$@\" `[ $# -eq 0 ] && echo --no-walk HEAD`; }; f"
 
+	# from https://git.wiki.kernel.org/index.php/Aliases#Editing.2Fadding_conflicted_files
+	edit-unmerged = "!f() { git diff --name-status --diff-filter=U | cut -f2 ; }; geany `f`"
+
+	# from https://git.wiki.kernel.org/index.php/Aliases#Obtaining_the_Empty_Tree_SHA1
+	whitespace-check = !"git diff --check $(git null-tree)"
+
+	unpushed-branches = !"f() { git log --branches --not --remotes=$1 --simplify-by-decoration --decorate --oneline ; }; f"
+
 [color]
 	ui = true
 [push]
