@@ -4,8 +4,12 @@
 alias ls='ls -h --classify --color=auto'
 alias gg='git gui'
 alias hv='history | less +G'
-alias dmt='dmesg -T | tail'
-alias dml='dmesg -T | less +G'
+DMESG_COLOUR=''
+if grep -q -e '--color' < <(dmesg -h); then
+	DMESG_COLOUR='-L=always'
+fi
+alias dmt='_dmt() { dmesg "$DMESG_COLOUR" "$@" | tail; }; _dmt'
+alias dml='_dml() { dmesg "$DMESG_COLOUR" "$@" | less -R +G; }; _dml'
 alias umount_gvfs_smb='gvfs-mount -s smb'
 alias newpty='script -q /dev/null'
 alias loadalias='. ~/.bash_aliases'
