@@ -196,6 +196,10 @@ if [ "${BRCEJ_SHOW_NETNS}" != 0 ]; then
 	fi
 fi
 
+if [ -n "${PROMPT_TAG}" ]; then
+	PS1_PREFIX="\[\e[0;1;95m\][${PROMPT_TAG}]\[\e[m\] ${PS1_PREFIX}"
+fi
+
 if [ "`id -u`" -ne "0" ]; then
 	PROMPT_USER_COLOUR='32'
 else
@@ -254,6 +258,16 @@ fi
 function set_title_tag() {
 	export TITLE_TAG="$1"
 	. "${BASH_SOURCE[0]}"
+}
+
+function set_prompt_tag() {
+	export PROMPT_TAG="$1"
+	. "${BASH_SOURCE[0]}"
+}
+
+function set_term_tags() {
+	set_title_tag "$1"
+	set_prompt_tag "$1"
 }
 
 EDITOR=nano
