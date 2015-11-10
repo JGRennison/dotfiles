@@ -5,7 +5,7 @@ alias ls='ls -h --classify --color=auto'
 alias gg='git gui'
 alias hv='history | less +G'
 DMESG_COLOUR=''
-if grep -q -e '--color' < <(dmesg -h); then
+if grep -q -e '--color' < <(dmesg -h 2>&1); then
 	DMESG_COLOUR='-L=always'
 fi
 alias dmt='_dmt() { dmesg "$DMESG_COLOUR" "$@" | tail; }; _dmt'
