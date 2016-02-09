@@ -85,6 +85,9 @@ BRCEJ_SHOW_NETNS=1
 # Show tag in title
 BRCEJ_SHOW_TITLETAG=1
 
+# Show any firejail info before prompt
+BRCEJ_SHOW_FIREJAIL=1
+
 # Convenient place to locally override the above BRCEJ_ variables
 if [ -f ~/.bashrc_ext_cfg ]; then
 	. ~/.bashrc_ext_cfg
@@ -193,6 +196,14 @@ if [ "${BRCEJ_SHOW_NETNS}" != 0 ]; then
 	if [ -n "${NETNS_LIST}" ]; then
 		export PROMPT_COMMAND_SUFFIX="${PROMPT_COMMAND_SUFFIX} - netns[${NETNS_LIST}]"
 		export PS1_PREFIX="\[\e[0;94m\]netns[\[\e[m\]${NETNS_LIST}\[\e[0;94m\]] ${PS1_PREFIX}"
+	fi
+fi
+
+if [ "${BRCEJ_SHOW_FIREJAIL}" != 0 ]; then
+	PID1_COMM="`cat /proc/1/comm 2> /dev/null`"
+	if [ -z "${PID1_COMM}" -o "${PID1_COMM}" = "firejail" ]; then
+		export PROMPT_COMMAND_SUFFIX="${PROMPT_COMMAND_SUFFIX} - firejail"
+		export PS1_PREFIX="\[\e[0;91m\][firejail] ${PS1_PREFIX}"
 	fi
 fi
 
