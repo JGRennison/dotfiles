@@ -263,7 +263,6 @@ if [ "${BRCEJ_SHORTEN_DIRLEN}" != 0 -a -f ~/bin/shorten_path.py ] && type python
 	PROMPT_COMMAND+='cachedshortendir; export PS1="${PS1_PREPATH}${CURSHRTPWD}${PS1_POSTPATH}"'
 else
 	export PS1="${PS1_PREPATH}\W${PS1_POSTPATH}"
-	PROMPT_COMMAND=
 fi
 
 function set_title_tag() {
