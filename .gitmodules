@@ -10,3 +10,6 @@
 [submodule "deps/git-scripts"]
 	path = deps/git-scripts
 	url = https://github.com/jwiegley/git-scripts.git
+[submodule "deps/git-cascade"]
+	path = deps/git-cascade
+	url = https://github.com/cool-RR/git-cascade.git
