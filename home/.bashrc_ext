@@ -280,4 +280,4 @@ function set_term_tags() {
 	set_prompt_tag "$1"
 }
 
-EDITOR=nano
+export EDITOR=nano
