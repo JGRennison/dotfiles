@@ -43,7 +43,7 @@
 
 	unpushed-branches = !"f() { git log --branches --not --remotes=$1 --simplify-by-decoration --decorate --oneline ; }; f"
 
-	dsf = "!git diff --color \"$@\" | diff-so-fancy"
+	dsf = "!git diff --color \"$@\" | diff-so-fancy | git pager"
 
 [color]
 	ui = true
