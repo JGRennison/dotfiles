@@ -30,10 +30,12 @@
 	null-tree = !"git hash-object -t tree /dev/null"
 	tail-rev = !"git rev-list --max-parents=0 HEAD"
 
-	# Note this requires a contiguous range from a ref
+	# Note these requires a contiguous range from a ref
 	# Providing a ref instead of a range processes the ref and all ancestors(!)
 	# Defaults to just HEAD
 	reset-author = !"f() { git filter-branch --env-filter 'GIT_AUTHOR_NAME=\"`git config user.name`\";GIT_AUTHOR_EMAIL=\"`git config user.email`\";' -- \"$@\" `[ $# -eq 0 ] && echo --no-walk HEAD`; }; f"
+	reset-committer = !"f() { git filter-branch --env-filter 'GIT_COMMITTER_NAME=\"`git config user.name`\";GIT_COMMITTER_EMAIL=\"`git config user.email`\";' -- \"$@\" `[ $# -eq 0 ] && echo --no-walk HEAD`; }; f"
+	reset-author-and-committer = !"f() { git filter-branch --env-filter 'GIT_AUTHOR_NAME=\"`git config user.name`\";GIT_AUTHOR_EMAIL=\"`git config user.email`\";GIT_COMMITTER_NAME=\"`git config user.name`\";GIT_COMMITTER_EMAIL=\"`git config user.email`\";' -- \"$@\" `[ $# -eq 0 ] && echo --no-walk HEAD`; }; f"
 
 	# from https://git.wiki.kernel.org/index.php/Aliases#Editing.2Fadding_conflicted_files
 	edit-unmerged = "!f() { git diff --name-status --diff-filter=U | cut -f2 ; }; geany `f`"
