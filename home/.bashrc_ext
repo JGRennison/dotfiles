@@ -280,4 +280,12 @@ function set_term_tags() {
 	set_prompt_tag "$1"
 }
 
+if [ -d ~/.bash_completion.d ]; then
+	for file in ~/.bash_completion.d/*.sh; do
+		if [ -x "$file" -a "`stat -c '%u' "$file"`" -eq "`stat -c '%u' "${BASH_SOURCE[0]}"`" ]; then
+			source "$file"
+		fi
+	done
+fi
+
 export EDITOR=nano
