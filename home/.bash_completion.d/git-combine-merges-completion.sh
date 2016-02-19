@@ -1,0 +1,1 @@
+../../deps/git-combine-merges/git-combine-merges-completion.sh
