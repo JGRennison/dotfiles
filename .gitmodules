@@ -13,3 +13,6 @@
 [submodule "deps/git-cascade"]
 	path = deps/git-cascade
 	url = https://github.com/cool-RR/git-cascade.git
+[submodule "deps/git-combine-merges"]
+	path = deps/git-combine-merges
+	url = https://github.com/JGRennison/git-combine-merges.git
