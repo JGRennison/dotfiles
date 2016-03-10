@@ -1,0 +1,3 @@
+In /usr/local/libexec/thunar-archive-plugin or /usr/libexec/thunar-archive-plugin
+
+sudo ln -rs file-roller.tap org.gnome.FileRoller.tap
