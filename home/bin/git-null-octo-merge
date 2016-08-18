@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# Copyright © Jonathan G. Rennison 2016 <j.g.rennison@gmail.com>
+# License: New BSD License, see BSD-LICENSE.txt
+
+parents=()
+for arg; do
+	parents+=( '-p' "$arg" )
+done
+
+exec git commit-tree "${parents[@]}" -m "Merge $*" "$(git merge-base --octopus "$@" || git hash-object -t tree /dev/null)^{tree}"
