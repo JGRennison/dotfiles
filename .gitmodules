@@ -16,3 +16,6 @@
 [submodule "deps/git-combine-merges"]
 	path = deps/git-combine-merges
 	url = https://github.com/JGRennison/git-combine-merges.git
+[submodule "deps/git-rebase-all"]
+	path = deps/git-rebase-all
+	url = https://github.com/nornagon/git-rebase-all
