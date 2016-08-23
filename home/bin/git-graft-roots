@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# Copyright © Jonathan G. Rennison 2016 <j.g.rennison@gmail.com>
+# License: New BSD License, see BSD-LICENSE.txt
+
+GIT_DIR="$(git rev-parse --git-dir)"
+
+[ -z "$GIT_DIR" ] && exit 1
+
+GRAFT_ROOT=$(git commit-tree -m "graft root" $(git hash-object -t tree /dev/null))
+ROOTS=($(git rev-list --max-parents=0 "$@"))
+
+for root in "${ROOTS[@]}"; do
+	echo "$root $GRAFT_ROOT" >> "$GIT_DIR/info/grafts"
+done
