@@ -246,7 +246,8 @@ PS1_POSTPATH="\[\e[m\]]\[\e[1;${PROMPT_USER_COLOUR}m\]\\$\[\e[m\] \[\e[0m\]"
 if [ "${BRCEJ_SHORTEN_DIRLEN}" != 0 -a -f ~/bin/shorten_path.py ] && type python > /dev/null; then
 	function shortendir() {
 		ELIP=`printf '\u2026'`
-		~/bin/shorten_path.py "${PWD/#$HOME/$TILDE}" "${BRCEJ_SHORTEN_DIRLEN}" "$ELIP" | sed -r "s/$ELIP/\\\\[\\\\033[96m\\\\]$ELIP\\\\[\\\\033[34m\\\\]/g"
+		XPWD="$PWD/"
+		~/bin/shorten_path.py "${XPWD/#$HOME\//$TILDE\/}" "${BRCEJ_SHORTEN_DIRLEN}" "$ELIP" | sed -r -e "s/\\/\$//" -e "s/$ELIP/\\\\[\\\\033[96m\\\\]$ELIP\\\\[\\\\033[34m\\\\]/g"
 	}
 	export PREV_CSD_PWD=
 	export CURSHRTPWD=
