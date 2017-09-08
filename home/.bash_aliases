@@ -38,6 +38,17 @@ function _sshfst() {
 }
 complete -F _sshfst sshfst
 
+function _sshfsa() {
+	if ! complete -p sshfs &> /dev/null && declare -f -F _completion_loader &> /dev/null; then
+		_completion_loader sshfs
+	fi
+	_sshfs "$@"
+	local reply=( "${COMPREPLY[@]/%\:/}" )
+	COMPREPLY=()
+	for item in "${reply[@]}"; do [[ $item == */ ]] || COMPREPLY+=("$item"); done
+	return 0
+}
+
 function sshfsa() {
 	TARG="$1"
 	shift
@@ -45,12 +56,12 @@ function sshfsa() {
 	sshfst "$TARG":/ ~/mnt/"$TARG" "$@"
 	clearmountpoints
 }
-complete -F _sshfst sshfsa
+complete -F _sshfsa sshfsa
 
 function sshfsar() {
 	sshfsa "$@" -o allow_root
 }
-complete -F _sshfst sshfsar
+complete -F _sshfsa sshfsar
 
 function funmount() {
 	fusermount -u ~/mnt/"$1"
