@@ -82,6 +82,9 @@ BRCEJ_SHOW_RETCODE=1
 # Show any network namespaces before prompt
 BRCEJ_SHOW_NETNS=1
 
+# Show any mount namespace before prompt
+BRCEJ_SHOW_MNTNS=1
+
 # Show tag in title
 BRCEJ_SHOW_TITLETAG=1
 
@@ -196,6 +199,15 @@ if [ "${BRCEJ_SHOW_NETNS}" != 0 ]; then
 	if [ -n "${NETNS_LIST}" ]; then
 		export PROMPT_COMMAND_SUFFIX="${PROMPT_COMMAND_SUFFIX} - netns[${NETNS_LIST}]"
 		export PS1_PREFIX="\[\e[0;94m\]netns[\[\e[m\]${NETNS_LIST}\[\e[0;94m\]] ${PS1_PREFIX}"
+	fi
+fi
+
+if [ "${BRCEJ_SHOW_MNTNS}" != 0 ]; then
+	SELFMNTNS="`readlink /proc/self/ns/mnt 2> /dev/null`"
+	PID1MNTNS="`readlink /proc/1/ns/mnt 2> /dev/null`"
+	if [ -n "${SELFMNTNS}" -a -n "${PID1MNTNS}" -a "${SELFMNTNS}" != "${PID1MNTNS}" ]; then
+		export PROMPT_COMMAND_SUFFIX="${PROMPT_COMMAND_SUFFIX} - ${SELFMNTNS}"
+		export PS1_PREFIX="\[\e[0;91m\]${SELFMNTNS} ${PS1_PREFIX}"
 	fi
 fi
 
