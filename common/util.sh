@@ -26,6 +26,9 @@ function display_description_line() {
 
 function sudoers_add_prechecks() {
 	USER="`logname`"
+	if [ -z "$USER" ]; then
+		USER="$SUDO_USER"
+	fi
 	USERUID="`id -u "$USER"`"
 	CURUID="`id -u`"
 
