@@ -12,8 +12,15 @@
 . "`dirname "$0"`/../common/util.sh"
 
 sudoers_add_prechecks
-
-if [ '!' -e '/lib/security/pam_ssh_agent_auth.so' ]; then
+if apt-cache show libpam-ssh-agent-auth &> /dev/null; then
+	if ! dpkg-query -l "libpam-ssh-agent-auth" &> /dev/null; then
+		echo "Installing libpam-ssh-agent-auth"
+		if ! apt-get install "libpam-ssh-agent-auth"; then
+			echo "Installation didn't seem to work, aborting"
+			exit 1
+		fi
+	fi
+elif [ '!' -e '/lib/security/pam_ssh_agent_auth.so' ]; then
 	echo "pam_ssh_agent_auth does not seem to be installed"
 	echo "Type 'y' or 'yes' to install from ppa:cpick/pam-ssh-agent-auth"
 	echo "To install from source instead, type 'n', download from:"
