@@ -36,6 +36,9 @@ BRCEJ_SHOW_SSH_HOST=0
 # Set this to a non-empty string to use this instead of the machine hostname
 BRCEJ_USE_HOST=
 
+# Set this to a username, to omit the leading username from the terminal title for that user, if the hostname is also not shown
+BRCEJ_NO_USER_TITLE=
+
 # Add an indicator to the prompt if we are in a GNU screen
 BRCEJ_SHOW_SCREEN=1
 
@@ -237,7 +240,12 @@ if [ "${BRCEJ_SET_TITLE}" != 0 ]; then
 			if [ -n "$PROMPT_COMMAND" ]; then
 				PROMPT_COMMAND+="; "
 			fi
-		PROMPT_COMMAND+='echo -ne "\033]2;${TITLE_TAG:+[${TITLE_TAG}] }${PROMPT_COMMAND_PREFIX}${USER}${PROMPT_COMMAND_HOST} - ${PWD/#$HOME/$TILDE}${THIS_TTY:+ - }${THIS_TTY}${PROMPT_COMMAND_SUFFIX}\007"'
+		if [ -n "$BRCEJ_NO_USER_TITLE" -a "$BRCEJ_NO_USER_TITLE" == "$USER" -a -z "$PROMPT_COMMAND_HOST" ]; then
+			TITLE_USER_HOST=''
+		else
+			TITLE_USER_HOST="${USER}${PROMPT_COMMAND_HOST} - "
+		fi
+		PROMPT_COMMAND+='echo -ne "\033]2;${TITLE_TAG:+[${TITLE_TAG}] }${PROMPT_COMMAND_PREFIX}${TITLE_USER_HOST}${PWD/#$HOME/$TILDE}${THIS_TTY:+ - }${THIS_TTY}${PROMPT_COMMAND_SUFFIX}\007"'
 		TERMINAL_TITLE_ENABLED=1
 		;;
 	*)
