@@ -15,8 +15,9 @@ undo=
 disable=
 enable=
 options=0
+iface=
 
-while getopts "n:ude" opt; do
+while getopts "n:udei:" opt; do
   case $opt in
     n)
       num="$OPTARG"
@@ -32,6 +33,9 @@ while getopts "n:ude" opt; do
     e)
       enable=1
       ((options++))
+      ;;
+    i)
+      iface="$OPTARG"
       ;;
     ?)
       exit 1
@@ -98,6 +102,11 @@ else
 	ip netns exec $name ip route add default via $addr1
 
 	iptables -t nat -A POSTROUTING -s $addr2 -d 0.0.0.0/0 -j MASQUERADE
+
+	if [ -n "$iface" ]; then
+		iptables -A FORWARD -i "$iface" -o veth${num}.0 -j ACCEPT
+		iptables -A FORWARD -o "$iface" -i veth${num}.0 -j ACCEPT
+	fi
 
 	sysctl net.ipv4.ip_forward=1
 
