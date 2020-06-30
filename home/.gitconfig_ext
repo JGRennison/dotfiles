@@ -50,6 +50,8 @@
 
 	clear-grafts = !"git rev-parse --git-dir > /dev/null || exit 1 ; rm -f \"$(git rev-parse --git-dir)/info/grafts\""
 
+	fetch-pr = !"f() { git fetch "$1" "pull/$2/head:pr-$2" ; }; f"
+
 [color]
 	ui = true
 [push]
