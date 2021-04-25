@@ -8,8 +8,8 @@ DMESG_COLOUR=''
 if grep -q -e '--color' < <(dmesg -h 2>&1); then
 	DMESG_COLOUR='-L=always'
 fi
-alias dmt='_dmt() { dmesg "$DMESG_COLOUR" "$@" | tail; }; _dmt'
-alias dml='_dml() { dmesg "$DMESG_COLOUR" "$@" | less -R +G; }; _dml'
+alias dmt='_dmt() { sudo dmesg "$DMESG_COLOUR" "$@" | tail; }; _dmt'
+alias dml='_dml() { sudo dmesg "$DMESG_COLOUR" "$@" | less -R +G; }; _dml'
 alias umount_gvfs_smb='gvfs-mount -s smb'
 alias newpty='script -q /dev/null'
 alias loadalias='. ~/.bash_aliases'
