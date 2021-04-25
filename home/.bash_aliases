@@ -28,6 +28,8 @@ alias .....='cd ../../../..'
 alias ......='cd ../../../../..'
 alias .......='cd ../../../../../..'
 
+alias VirtualBox='VirtualBox -style Fusion'
+
 alias sshfst='sshfs -o idmap=user -o transform_symlinks -o ControlPath=none'
 function _sshfst() {
 	if ! complete -p sshfs &> /dev/null && declare -f -F _completion_loader &> /dev/null; then
