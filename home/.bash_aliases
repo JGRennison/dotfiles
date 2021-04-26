@@ -29,6 +29,7 @@ alias ......='cd ../../../../..'
 alias .......='cd ../../../../../..'
 
 alias VirtualBox='VirtualBox -style Fusion'
+alias virtualbox='virtualbox -style Fusion'
 
 alias sshfst='sshfs -o idmap=user -o transform_symlinks -o ControlPath=none'
 function _sshfst() {
