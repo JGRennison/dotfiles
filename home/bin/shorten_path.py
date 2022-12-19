@@ -1,1 +1,0 @@
-../../deps/shorten_path.py

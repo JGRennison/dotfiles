@@ -263,11 +263,11 @@ fi
 PS1_PREPATH="\`${PS1_SELECT}\`${PS1_PREFIX}\[\e[0;${PROMPT_USER_COLOUR}m\]\u${PS1_HOST}\[\e[m\][\[\e[1;34m\]"
 PS1_POSTPATH="\[\e[m\]]\[\e[1;${PROMPT_USER_COLOUR}m\]\\$\[\e[m\] \[\e[0m\]"
 
-if [ "${BRCEJ_SHORTEN_DIRLEN}" != 0 -a -f ~/bin/shorten_path.py ] && type python > /dev/null; then
+if [ "${BRCEJ_SHORTEN_DIRLEN}" != 0 -a -f ~/bin/shorten_path ]; then
 	function shortendir() {
 		ELIP=`printf '\u2026'`
 		XPWD="$PWD/"
-		~/bin/shorten_path.py "${XPWD/#$HOME\//$TILDE\/}" "${BRCEJ_SHORTEN_DIRLEN}" "$ELIP" | sed -r -e "s/\\/\$//" -e "s/$ELIP/\\\\[\\\\033[96m\\\\]$ELIP\\\\[\\\\033[34m\\\\]/g"
+		~/bin/shorten_path "${XPWD/#$HOME\//$TILDE\/}" "${BRCEJ_SHORTEN_DIRLEN}" "$ELIP" | sed -r -e "s/\\/\$//" -e "s/$ELIP/\\\\[\\\\033[96m\\\\]$ELIP\\\\[\\\\033[34m\\\\]/g"
 	}
 	export PREV_CSD_PWD=
 	export CURSHRTPWD=

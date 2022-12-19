@@ -1,0 +1,45 @@
+#!/usr/bin/env perl
+
+# Copyright © Jonathan G. Rennison 2022 <j.g.rennison@gmail.com>
+# License: New BSD License, see BSD-LICENSE.txt
+
+use strict;
+use warnings;
+use utf8;
+
+binmode(STDOUT, ":utf8");
+
+if (scalar @ARGV < 2) {
+	print STDERR "Usage: $0 <path> <length> [<shorten-string>]\n";
+	exit 1;
+}
+
+my ($path, $length, $str) = @ARGV;
+$str //= "\x{2026}";
+my $str_len = length($str);
+
+if (length($path) > $length) {
+	my @parts = split("/", $path);
+	my $to_remove = length($path) - $length;
+	while ($to_remove > 0) {
+		my $idx = 0;
+		my $best_idx = -1;
+		my $best_len = $str_len + 1;
+		for (@parts) {
+			if (length($_) > $best_len) {
+				$best_len = length($_);
+				$best_idx = $idx;
+			}
+			$idx++;
+		}
+		if ($best_idx >= 0) {
+			$parts[$best_idx] = substr($parts[$best_idx], 0, -($str_len + 1)) . $str;
+			$to_remove--;
+		} else {
+			last;
+		}
+	}
+	$path = join("/", @parts);
+}
+
+print $path;
