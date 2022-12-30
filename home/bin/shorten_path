@@ -1,4 +1,4 @@
-#!/usr/bin/env perl
+#!/usr/bin/env -S perl -CA
 
 # Copyright © Jonathan G. Rennison 2022 <j.g.rennison@gmail.com>
 # License: New BSD License, see BSD-LICENSE.txt
